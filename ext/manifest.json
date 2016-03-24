@@ -5,8 +5,9 @@
   "description": "EtherID Chrome Plugin",
   "version": "0.0.1",
   "icons": {
+      "128": "images/icon.png"  
   },
-
+    
   "background": {
     "scripts": [
         "js/bg_bundle.js"
@@ -27,6 +28,6 @@
     
 
   "permissions": [
-     "<all_urls>","webRequest","webRequestBlocking"
+     "<all_urls>","webRequest","webRequestBlocking", "storage"
   ]
 }

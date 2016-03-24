@@ -237,13 +237,13 @@ module.exports = new function() {
         if( !callback ) { // NOT RECOMMENDED !!!
             res = this.getContract( web3 ).getId( domain, id ) 
 
-            h =  web3.toHex( res[0] )
-            a = this.hexToArray( h )
+            var h =  web3.toHex( res[0] )
+            var a = this.hexToArray( h )
             while( a.length < 32 ) { a.splice( 0, 0, 0) } //make it 32 for sure
-            mh =  MH.encode( new Buffer( a ), 18, 32 ) 
-            hash = bs58.encode( mh )        
+            var mh =  MH.encode( new Buffer( a ), 18, 32 ) 
+            var hash = bs58.encode( mh )        
 
-            r =  
+            var r =  
             {
                 name: id,
                 nameStr: this.toUTF( web3, id ),
@@ -265,13 +265,13 @@ module.exports = new function() {
             res = this.getContract( web3 ).getId( domain, id, function( error, res ) {
                 if( error ) { callback( error, null ) }
                 else {
-                    h =  web3.toHex( res[0] ) 
-                    a = EtherId.hexToArray( h )
+                    var h =  web3.toHex( res[0] ) 
+                    var a = EtherId.hexToArray( h )
                     while( a.length < 32 ) { a.splice( 0, 0, 0) } //make it 32 for sure
-                    mh =  MH.encode( new Buffer( a ), 18, 32 ) 
-                    hash = bs58.encode( mh )        
+                    var mh =  MH.encode( new Buffer( a ), 18, 32 ) 
+                    var hash = bs58.encode( mh )        
 
-                    r =  
+                    var r =  
                     {
                         name: id,
                         nameStr: EtherId.toUTF( web3, id ),
@@ -299,8 +299,8 @@ module.exports = new function() {
         if( web3._extend.utils.isBigNumber( d ) ) { domain = d }
         else if( HEXRE.test( d ) )  { domain = web3.toBigNumber( d ) }
         else { //string
-            utf = utf8.encode( d ).slice(0, 32);
-            hex = "0x" + this.asciiToHex( utf )    
+            var utf = utf8.encode( d ).slice(0, 32);
+            var hex = "0x" + this.asciiToHex( utf )    
             domain = web3.toBigNumber( hex )
         } 
         
@@ -316,12 +316,12 @@ module.exports = new function() {
     }    
     
     this.changeId = function( web3, addr, d, i, v, params, callback ) {
-        var domain = d;
+        var domain = d, id, value;
         if( web3._extend.utils.isBigNumber( d ) ) { domain = d }
         else if( HEXRE.test( d ) )  { domain = web3.toBigNumber( d ) }
         else { //string
-            utf = utf8.encode( d ).slice(0, 32);
-            hex = "0x" + this.asciiToHex( utf )    
+            var utf = utf8.encode( d ).slice(0, 32);
+            var hex = "0x" + this.asciiToHex( utf )    
             domain = web3.toBigNumber( hex )
         }
         
@@ -329,8 +329,8 @@ module.exports = new function() {
         if( web3._extend.utils.isBigNumber( i ) ) { id = i }
         else if( HEXRE.test( i ) )  { id = web3.toBigNumber( i ) }
         else { //string
-            utf = utf8.encode( id ).slice(0, 32);
-            hex = "0x" + this.asciiToHex( utf )    
+            var utf = utf8.encode( id ).slice(0, 32);
+            var hex = "0x" + this.asciiToHex( utf )    
             id = web3.toBigNumber( hex )
         }
         
@@ -343,13 +343,13 @@ module.exports = new function() {
             ar = MH.decode( new Buffer( out ) )
             if ( ar.length != 32 ) throw "HASH code should be 32 bytes long"
             if ( ar.code != 0x12 ) throw "Only sha2-256 hashes are excepted"
-            hex =  "0x" + arrayToHex( ar.digest )
+            var hex =  "0x" + arrayToHex( ar.digest )
             value = web3.toBigNumber( hex ) 
         }
         else
         {
-            utf = utf8.encode( v ).slice(0, 32);
-            hex = "0x" + this.asciiToHex( utf ) 
+            var utf = utf8.encode( v ).slice(0, 32);
+            var hex = "0x" + this.asciiToHex( utf ) 
             value = web3.toBigNumber( hex ) 
         }
         
@@ -427,9 +427,9 @@ module.exports = new function() {
     this.getIdEnum = function( web3, domain )
     {
         
-        d = this.getDomain( web3, domain )
+        var d = this.getDomain( web3, domain )
         
-        e = 
+        var e = 
         {
             domain: d.domain,
             current_id: d.root_id,
@@ -442,7 +442,7 @@ module.exports = new function() {
     
     this.getNextId = function( web3, e ) {
         
-        id = this.getId( web3, e.domain, e.current_id ) 
+        var id = this.getId( web3, e.domain, e.current_id ) 
         
         if( e.current_id.toNumber() == 0 ) 
         {
@@ -16541,6 +16541,29 @@ if( web3.currentProvider == null )
     web3.setProvider( new web3.providers.HttpProvider( ) );
 
 var EID = require( 'etherid-js')
+var ipfs_gateway
+
+chrome.storage.sync.get('ipfs_gateway', function (result) {
+    ipfs_gateway = result.ipfs_gateway;
+        
+    if( !ipfs_gateway ) {
+        ipfs_gateway = "http://localhost:8080/ipfs/"
+            
+        chrome.storage.sync.set( { 'ipfs_gateway': v} )
+    }
+});
+
+
+chrome.storage.onChanged.addListener( function( changes, namespace ) {
+    for (key in changes) {
+          var storageChange = changes[key];
+        
+        if( key == "ipfs_gateway" ) {
+            ipfs_gateway = storageChange.newValue
+        }
+    }
+});
+
 
 chrome.webRequest.onBeforeRequest.addListener(
     
@@ -16563,14 +16586,14 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                 var r = EID.getId( web3, domain, ID )
                 
-                if( r.valueHash != "" ) {
+                if( r.value != 0 && r.valueHash != "" ) {
                     console.log( "Found IPFS hash:" + r.valueHash );
                     
                     var tail = ""
                     for( var i = 3; i < ss.length; i++ ) tail += "/" + ss[i]
 
                     return {
-                        redirectUrl: "http://localhost:8080/ipfs/" + r.valueHash + tail
+                        redirectUrl: ipfs_gateway + r.valueHash + tail
                     };
                 }
             }
@@ -16580,6 +16603,72 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['blocking']    
 );
 
+chrome.webRequest.onBeforeRequest.addListener(
+    
+    function(details)
+    {
+        console.log( "url:" + details.url );
+        var u = url.parse( details.url )
+        
+        if( u.path.startsWith( "/ipfs") ) {
+
+            var ss = u.path.split( "/")
+            
+            if( ss.length > 2 ) {
+                
+                var dd = ss[2].split( ".")
+                
+                var domain = dd[0]
+                var ID = dd.length > 1 ? dd[1] : "ipfs"
+                
+                console.log( "domain:" + domain + " ID:" + ID );
+
+                var r = EID.getId( web3, domain, ID )
+                
+                if( r.value != 0 && r.valueHash != "" ) {
+                    console.log( "Found IPFS hash:" + r.valueHash );
+                    
+                    var tail = ""
+                    for( var i = 3; i < ss.length; i++ ) tail += "/" + ss[i]
+
+                    return {
+                        redirectUrl: ipfs_gateway + r.valueHash + tail
+                    };
+                }
+            }
+        } else {
+            var ss = u.path.split( "/")
+            
+            if( ss.length > 1 ) {
+                var dd = ss[1].split( ".")
+                
+                var domain = dd[0]
+                var ID = dd.length > 1 ? dd[1] : "ip"
+                
+                console.log( "domain:" + domain + " ID:" + ID );
+
+                var r = EID.getId( web3, domain, ID )
+                
+                if( r.valueStr != "" ) {
+                    console.log( "Found IP string:" + r.valueStr );
+                    
+                    var tail = ""
+                    for( var i = 2; i < ss.length; i++ ) tail += "/" + ss[i]
+
+                    var p = u.port ? ":" + u.port : ""
+                        
+                    return {
+                        redirectUrl: u.protocol + "//" + r.valueStr + p + tail
+                    };
+                }
+            }
+            
+        }
+        
+    },
+    {urls: ["*://e.id/*"]},
+    ['blocking']    
+);
 console.log( "All set!");
 
 },{"etherid-js":3,"url":313,"web3":7}],92:[function(require,module,exports){
