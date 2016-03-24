@@ -6,7 +6,7 @@ In order the extenstion to work you need to install and run Ethereum node and ma
 
 # IPFS redirection
 
-Once you install the plugin, you can simply use the EtherID IPFS hash values in the file:///ipfs urls.
+Once you install the plugin, you can simply use the EtherID IPFS hash values in the file:///ipfs/... urls.
 
 For example, if you type
 
@@ -23,7 +23,7 @@ the browser will automatically redirect into the IPFS hash specified in the test
         
 # HTTP redirections
 
-The plugin redirects the urls from non existing domain e.id ( http://e.id/ ). If you try URL
+The plugin redirects the urls from non existing domain e.id ( http://e.id/... ). If you try URL
 
         http://e.id/test
         
