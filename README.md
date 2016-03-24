@@ -4,6 +4,11 @@ EtherId-chrome extention is a small plugin that redirect the url's based on the 
 
 In order the extenstion to work you need to install and run Ethereum node and made the JSON RPC available. 
 
+The plugin page: https://chrome.google.com/webstore/detail/etherid/khinkcbgenlipcookacgpnmahhhiccdh
+
+
+
+
 # IPFS redirection
 
 Once you install the plugin, you can simply use the EtherID IPFS hash values in the file:///ipfs/... urls.
